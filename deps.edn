@@ -1,0 +1,7 @@
+{:paths ["src"]
+ :deps  {org.clojure/clojure {:mvn/version "1.10.3"}}
+ :aliases
+ {:test
+  {:extra-paths ["test"]
+   :extra-deps  {clj-ph-css/clj-ph-css {:mvn/version "0.1.3"}
+                 healthsamurai/matcho  {:mvn/version "RELEASE"}}}}}
