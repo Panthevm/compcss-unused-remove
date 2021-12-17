@@ -2,8 +2,9 @@
 
 (require 'clojure.java.io)
 (require 'clojure.string)
+(require 'clj-ph-css.core)
 
-(def words-pattern #"([a-zA-Z0-9\*_-]+)")
+(def words-pattern #"([a-zA-Z0-9\*\:_-]+)")
 
 (defn directory-files
   [directory-path]
@@ -16,11 +17,19 @@
   [content]
   (map second (re-seq words-pattern content)))
 
+(defn escape-word
+  [word]
+  (cond-> word
+    (= \: (first word))
+    (subs 1)
+    :always (clojure.string/replace #":" {":" "\\:"})))
+
 (defn directories-dictionary
   [paths]
   (->>
    (mapcat directory-files paths)
    (mapcat (comp file-words slurp))
+   (map escape-word)
    (set)))
 
 (defn attribute?
@@ -131,7 +140,8 @@
              (fn [stylesheets]
                (let [dictionary
                      (-> (get-in configuration [:input :clj])
-                         (directories-dictionary))
+                         (directories-dictionary)
+                         (conj "*"))
                      by-dictionary
                      (clean dictionary stylesheets)
                      context
